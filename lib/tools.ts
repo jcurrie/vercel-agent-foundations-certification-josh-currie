@@ -1,9 +1,28 @@
-import { tool } from "ai";
+import { tool, type UIMessageChunk } from "ai";
 import { z } from "zod";
 import { ApiRequestError, createReturn, getBackOfficeReturns, getBackOfficeSales, getBackOfficeStock, getBackOfficeSupportTickets, getCategories, getOrder, getProductById, getProductStock, getProducts, preauthorizeRefund, notifyReturnInProcess } from "@/lib/api";
+import { getWritable } from "workflow";
 import { start } from "workflow/api";
 import { returnFlow } from "./workflows/return-flow";
 import { createOrGetSandbox, SANDBOX_NAME } from "@/lib/sandbox";
+
+export interface ProductStatus {
+  stage: "loading-product" | "checking-stock";
+  message: string;
+}
+
+async function writeProductStatus(toolCallId: string, status: ProductStatus) {
+  const writer = getWritable<UIMessageChunk>().getWriter();
+  try {
+    await writer.write({
+      type: "data-product-status",
+      id: toolCallId,
+      data: status,
+    });
+  } finally {
+    writer.releaseLock();
+  }
+}
 
 export const searchProducts = tool({
   description: `Search the Vercel swag store product catalog. Use this whenever the user asks about products, what the store sells, or wants recommendations. Optionally narrow results to a single category.`,
@@ -101,11 +120,21 @@ export const getProductDetails = tool({
         "The product's ID or slug, as returned by searchProducts (the id or slug field).",
       ),
   }),
-  execute: async ({ productId }) => {
+  execute: async ({ productId }, { toolCallId }) => {
     "use step";
+    await writeProductStatus(toolCallId, {
+      stage: "loading-product",
+      message: "Fetching product details…",
+    });
     try {
       const [product, stock] = await Promise.all([
-        getProductById(productId),
+        getProductById(productId).then(async (found) => {
+          await writeProductStatus(toolCallId, {
+            stage: "checking-stock",
+            message: `Checking live stock for ${found.name}…`,
+          });
+          return found;
+        }),
         getProductStock(productId),
       ]);
       return {

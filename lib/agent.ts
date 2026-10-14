@@ -1,9 +1,16 @@
 import {
     ToolLoopAgent,
-    type InferAgentUIMessage,
+    type InferUITools,
+    type UIMessage,
     type UIToolInvocation,
   } from "ai";
-  import { searchProducts, getAllCategories, returnOrder, getProductDetails } from "@/lib/tools";
+  import {
+    searchProducts,
+    getAllCategories,
+    returnOrder,
+    getProductDetails,
+    type ProductStatus,
+  } from "@/lib/tools";
   
   export const shoppingAgent = new ToolLoopAgent({
     model: "anthropic/claude-sonnet-5",
@@ -15,6 +22,10 @@ import {
     tools: { searchProducts, getAllCategories, returnOrder, getProductDetails },
   });
   
-  export type ShoppingAgentUIMessage = InferAgentUIMessage<typeof shoppingAgent>;
+  export type ShoppingAgentUIMessage = UIMessage<
+    unknown,
+    { "product-status": ProductStatus },
+    InferUITools<typeof shoppingAgent.tools>
+  >;
   export type SearchProductsToolInvocation = UIToolInvocation<typeof searchProducts>;
   export type ProductDetailsToolInvocation = UIToolInvocation<typeof getProductDetails>;
