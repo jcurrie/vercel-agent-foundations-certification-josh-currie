@@ -4,12 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/format";
 import type { ProductDetailsToolInvocation } from "@/lib/agent";
+import type { ProductStatus } from "@/lib/tools";
 
 interface AgentProductCardProps {
   invocation: ProductDetailsToolInvocation;
+  status?: ProductStatus;
 }
 
-export function AgentProductCard({ invocation }: AgentProductCardProps) {
+export function AgentProductCard({ invocation, status }: AgentProductCardProps) {
   if (
     invocation.state === "input-streaming" ||
     invocation.state === "input-available"
@@ -17,7 +19,7 @@ export function AgentProductCard({ invocation }: AgentProductCardProps) {
     const id = invocation.input?.productId;
     return (
       <div className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-        Looking up{id ? ` "${id}"` : ""}…
+        {status?.message ?? `Looking up${id ? ` "${id}"` : ""}…`}
       </div>
     );
   }

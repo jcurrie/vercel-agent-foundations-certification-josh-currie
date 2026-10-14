@@ -58,8 +58,15 @@ export function AgentChat() {
     <div className="flex h-full min-h-0 flex-col">
       <Conversation className="flex-1">
         <ConversationContent>
-          {messages.map((m) =>
-            m.parts.map((p, i) => {
+          {messages.map((m) => {
+            const productStatusByToolCall = new Map(
+              m.parts.flatMap((p) =>
+                p.type === "data-product-status" && p.id
+                  ? [[p.id, p.data] as const]
+                  : [],
+              ),
+            );
+            return m.parts.map((p, i) => {
               switch (p.type) {
                 case "text":
                   return (
@@ -75,13 +82,17 @@ export function AgentChat() {
                   );
                 case "tool-getProductDetails":
                   return (
-                    <AgentProductCard key={`${m.id}-${i}`} invocation={p} />
+                    <AgentProductCard
+                      key={`${m.id}-${i}`}
+                      invocation={p}
+                      status={productStatusByToolCall.get(p.toolCallId)}
+                    />
                   );
                 default:
                   return null;
               }
-            }),
-          )}
+            });
+          })}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>

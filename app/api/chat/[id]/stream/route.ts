@@ -1,6 +1,6 @@
-import { createModelCallToUIChunkTransform } from "@ai-sdk/workflow";
 import { createUIMessageStreamResponse } from "ai";
 import { getRun } from "workflow/api";
+import { createChatUIChunkTransform } from "@/lib/workflows/ui-stream";
 
 export async function GET(
   request: Request,
@@ -14,7 +14,7 @@ export async function GET(
   const run = await getRun(id);
   const readable = run
     .getReadable({ startIndex: 0 })
-    .pipeThrough(createModelCallToUIChunkTransform({ uiStartIndex }));
+    .pipeThrough(createChatUIChunkTransform({ uiStartIndex }));
 
   return createUIMessageStreamResponse({ stream: readable });
 }
