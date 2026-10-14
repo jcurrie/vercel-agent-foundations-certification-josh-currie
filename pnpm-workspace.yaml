@@ -1,0 +1,35 @@
+allowBuilds:
+  '@swc/core': true
+  cbor-extract: true
+  esbuild: false
+minimumReleaseAgeExclude:
+  - '@vercel/backends@19.0.0'
+  - '@vercel/build-utils@14.21.0'
+  - '@vercel/cervel@0.1.80'
+  - '@vercel/container@19.1.0'
+  - '@vercel/detect-agent@1.2.7'
+  - '@vercel/elysia@19.0.0'
+  - '@vercel/express@19.0.0'
+  - '@vercel/fastify@19.0.0'
+  - '@vercel/gatsby-plugin-vercel-builder@2.2.72'
+  - '@vercel/go@22.0.0'
+  - '@vercel/h3@19.0.0'
+  - '@vercel/hono@19.0.0'
+  - '@vercel/hydrogen@20.0.0'
+  - '@vercel/koa@19.0.0'
+  - '@vercel/nestjs@19.0.0'
+  - '@vercel/next@23.0.0'
+  - '@vercel/node@24.0.0'
+  - '@vercel/python@25.0.0'
+  - '@vercel/redwood@21.0.0'
+  - '@vercel/remix-builder@24.0.0'
+  - '@vercel/ruby@21.0.0'
+  - '@vercel/rust@20.0.0'
+  - '@vercel/static-build@21.0.0'
+  - '@vercel/vc-native-darwin-arm64@64.0.1'
+  - '@vercel/vc-native-darwin-x64@64.0.1'
+  - '@vercel/vc-native-linux-arm64@64.0.1'
+  - '@vercel/vc-native-linux-x64@64.0.1'
+  - '@vercel/vc-native-win32-arm64@64.0.1'
+  - '@vercel/vc-native-win32-x64@64.0.1'
+  - vercel@64.0.1
